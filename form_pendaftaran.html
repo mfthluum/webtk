@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir Pendaftaran</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #e0f7fa, #b2ebf2);
+            color: #333;
+            padding: 20px;
+        }
+        h2, h3 {
+            color: #00838f;
+        }
+        form, #loginAdmin {
+            width: 50%;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+        input, select, textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background: #f8f8f8;
+            box-sizing: border-box; /* Tambahkan ini */
+        }
+        button {
+            padding: 12px 20px;
+            background: #00acc1;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0097a7;
+        }
+        #dataTersimpan {
+            display: none;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            color: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h2>Formulir Pendaftaran</h2>
+    <form id="formPendaftaran">
+        <input type="text" id="nama" placeholder="Nama Lengkap" required>
+        <input type="text" id="ttl" placeholder="Tempat dan Tanggal Lahir" required>
+        <select id="agama">
+            <option>Pilih Agama</option>
+            <option>Islam</option>
+            <option>Kristen</option>
+            <option>Hindu</option>
+            <option>Buddha</option>
+        </select>
+        <textarea id="alamat" placeholder="Alamat" required></textarea>
+        <input type="text" id="ayah" placeholder="Nama Ayah" required>
+        <input type="text" id="ibu" placeholder="Nama Ibu" required>
+        <input type="text" id="telepon" placeholder="Nomor Telepon" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <button type="button" onclick="simpanData()">Daftar</button>
+    </form>
+    <button onclick="tampilkanLogin()">Tampilkan Data</button>
+    
+    <div id="loginAdmin" style="display:none;">
+        <h3>Login Admin</h3>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+    
+    <div id="dataTersimpan">
+        <h3>Data Pendaftar</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>TTL</th>
+                    <th>Agama</th>
+                    <th>Alamat</th>
+                    <th>Ayah</th>
+                    <th>Ibu</th>
+                    <th>Telepon</th>
+                    <th>Email</th>
+                    <th>Aksi</th> </tr>
+            </thead>
+            <tbody id="outputData"></tbody>
+        </table>
+    </div>
+    
+    <script>
+        function simpanData() {
+            let nama = document.getElementById('nama').value;
+            let ttl = document.getElementById('ttl').value;
+            let agama = document.getElementById('agama').value;
+            let alamat = document.getElementById('alamat').value;
+            let ayah = document.getElementById('ayah').value;
+            let ibu = document.getElementById('ibu').value;
+            let telepon = document.getElementById('telepon').value;
+            let email = document.getElementById('email').value;
+    
+            // Validasi input
+            if (!nama || !ttl || agama === 'Pilih Agama' || !alamat || !ayah || !ibu || !telepon || !email) {
+                alert('Lengkapi semua data di atas!');
+                return; // Hentikan fungsi jika ada input yang kosong
+            }
+    
+            let data = {
+                nama: nama,
+                ttl: ttl,
+                agama: agama,
+                alamat: alamat,
+                ayah: ayah,
+                ibu: ibu,
+                telepon: telepon,
+                email: email
+            };
+            localStorage.setItem('pendaftaran', JSON.stringify(data));
+            alert('Data berhasil disimpan!');
+        }
+        
+        function tampilkanLogin() {
+        document.getElementById('loginAdmin').style.display = 'block';
+    }
+        
+    function login() {
+        let username = document.getElementById('username').value;
+        let password = document.getElementById('password').value;
+        if (username === 'admin' && password === 'alaliyah123') {
+            let data = localStorage.getItem('pendaftaran');
+            if (data) {
+                let parsedData = JSON.parse(data);
+                let output = `<tr>
+                    <td>${parsedData.nama}</td>
+                    <td>${parsedData.ttl}</td>
+                    <td>${parsedData.agama}</td>
+                    <td>${parsedData.alamat}</td>
+                    <td>${parsedData.ayah}</td>
+                    <td>${parsedData.ibu}</td>
+                    <td>${parsedData.telepon}</td>
+                    <td>${parsedData.email}</td>
+                    <td><button onclick="hapusData()">Hapus</button></td> </tr>`;
+                document.getElementById('outputData').innerHTML = output;
+                document.getElementById('dataTersimpan').style.display = 'block';
+            } else {
+                alert('Tidak ada data tersimpan!');
+            }
+        } else {
+            alert('Login gagal!');
+        }
+    }
+
+    function hapusData() {
+        localStorage.removeItem('pendaftaran');
+        alert('Data berhasil dihapus!');
+        document.getElementById('dataTersimpan').style.display = 'none'; // Sembunyikan tabel setelah dihapus
+    }
+    </script>
+</body>
+</html>
